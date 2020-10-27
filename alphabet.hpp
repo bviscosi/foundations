@@ -8,11 +8,13 @@
 class alphabet {
 
 public:
-  std::vector<character> a;
-
   alphabet(std::vector<character> chars) : a(chars){};
-  alphabet();
-  int size() { return a.size(); }
+  alphabet(std::string w, bool letters) {
+    for (auto i : w)
+      a.push_back(character(i, letters));
+  }
+  std::vector<character> a;
+  int size() { return int(a.size()); }
   void push_back(character c);
 };
 

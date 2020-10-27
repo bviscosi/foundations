@@ -11,13 +11,26 @@ class string {
 public:
   alphabet a;
   std::vector<character> chars;
+  bool isLetters = false;
 
-  string(alphabet alphabet, std::vector<character> s) : a(alphabet), chars(s){};
   string(alphabet alphabet) : a(alphabet){};
-
+  string(alphabet alphabet, std::vector<character> s) : a(alphabet), chars(s){};
+  string(alphabet alphabet, std::string w, bool ls) : a(alphabet) {
+    for (auto c : w)
+      chars.push_back(character(c, ls));
+  }
   void add(character c) { chars.push_back(c); }
-  int size() { return chars.size(); }
-  bool isEmpty() { return (size() == 0); }
+  void add(string w) {
+    for (auto c : w.chars)
+      chars.push_back(c);
+  }
+  void add(std::string w) {
+    for (auto c : w)
+      chars.push_back(character(c));
+  }
+  void push_front(character c) { chars.insert(chars.begin(), c); }
+  int size() { return int(chars.size()); }
+  bool isEmpty() { return !(chars.size()); }
   friend std::ostream &operator<<(std::ostream &out, const string &s);
 };
 
