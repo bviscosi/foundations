@@ -12,10 +12,10 @@ int main(void) {
 
 bool runTests(Corpus corpus) {
   std::vector<std::pair<DFA<int>, std::string>> c = corpus.getDFAs();
-  // alphabet letters("abcdefghijklmnopqrstuvwxyz", true);
+  alphabet letters("abcdefghijklmnopqrstuvwxyz", true);
   std::cout << SEPARATOR;
-  // testLexi(letters);
-  // testCorpus(c);
+  testLexi(letters);
+  testCorpus(c);
   testExample(c);
   testComplement(c);
   testUnion(c);
