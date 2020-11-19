@@ -6,21 +6,26 @@ bool runTests(Corpus corpus);
 
 int main(void) {
   Corpus corpus("default");
-  runTests(corpus);
+    
+    runTests(corpus);
+
   return 0;
 }
 
 bool runTests(Corpus corpus) {
-  std::vector<std::pair<DFA<int>, std::string>> c = corpus.getDFAs();
+  std::vector<std::pair<DFA<int>, std::string>> dfas = corpus.getDFAs();
   alphabet letters("abcdefghijklmnopqrstuvwxyz", true);
   std::cout << SEPARATOR;
-  testLexi(letters);
-  testCorpus(c);
-  testExample(c);
-  testComplement(c);
-  testUnion(c);
-  testIntersect(c);
-  testSubset(c);
-  std::cout << SEPARATOR;
-  return true;
+  // testLexi(letters);
+  // testDFAs(dfas);
+  // testExample(dfas);
+  // testComplement(dfas);
+  // testUnion(dfas);
+  // testIntersect(dfas);
+  // testSubset(dfas);
+  testEquals(dfas);
+  verifyWithEquals();
+  testOracle(corpus);
+  testTraceTree(corpus);
+    return true;
 }

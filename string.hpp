@@ -29,6 +29,13 @@ public:
       chars.push_back(character(c));
   }
   void push_front(character c) { chars.insert(chars.begin(), c); }
+    
+  character pop_front() {
+    character c = chars[0];
+    chars.erase(chars.begin());
+    return c;
+  }
+
   int size() { return int(chars.size()); }
   bool isEmpty() { return !(chars.size()); }
   friend std::ostream &operator<<(std::ostream &out, const string &s);

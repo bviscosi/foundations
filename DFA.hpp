@@ -16,9 +16,40 @@ public:
       std::function<State(State, character)> d, std::function<bool(State)> F)
       : Q(Q), E(E), q0(q0), d(d), F(F){};
 
-  bool accepts(string w);
-  std::optional<string> example();
-  std::optional<string> hasPath(State qi, string w);
+  bool accepts(string w) {
+    visited.clear();
+    auto qi = q0;
+    for (character c : w.chars) {
+      visited.push_back(qi);
+      qi = d(qi, c);
+    }
+    return F(qi);
+  }
+
+  std::optional<string> example() {
+    visited.clear();
+    string str(E);
+    return hasPath(q0, str);
+  }
+
+  std::optional<string> hasPath(State qi, string w) {
+    if (F(qi)) {
+      return w;
+    }
+    for (auto c : E.a) {
+      if (std::find(visited.begin(), visited.end(), d(qi, c)) ==
+          visited.end()) {
+        visited.push_back(d(qi, c));
+        auto output = hasPath(d(qi, c), w);
+        if (output.has_value()) {
+          w.add(output.value());
+          w.push_front(c);
+          return w;
+        }
+      }
+    }
+    return std::nullopt;
+  }
 
   std::vector<State> getVisited() { return visited; }
   std::function<bool(State)> getQ() { return Q; }

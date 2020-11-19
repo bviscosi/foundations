@@ -5,7 +5,7 @@
 
 template <class State> inline void test(DFA<State> dfa) {
   alphabet E = dfa.getE();
-  for (int i = 0; i < 12; i++) {
+  for (int i = 13; i < 40; i++) {
     accepts(dfa, lexi(E, i));
   }
   std::cout << SEPARATOR;
@@ -94,6 +94,149 @@ inline bool testSubset(std::vector<std::pair<DFA<State>, std::string>> corpus) {
                                                  : std::cout << ": FALSE\n";
   }
   return true;
+}
+
+// Task 21
+template <class State>
+inline bool testEquals(std::vector<std::pair<DFA<State>, std::string>> corpus) {
+  bool passed = false;
+  std::cout << "EQUALS TESTS\n" << SEPARATOR;
+  for (int i = 0; i < corpus.size() - 4; i++) {
+    std::cout << corpus[i].second << " == " << corpus[i].second << " : ";
+    equals(corpus[i].first, corpus[i].first) ? std::cout << "TRUE\n"
+                                             : std::cout << "FALSE\n";
+    std::cout << corpus[i].second << " == " << corpus[i + 1].second << " : ";
+    equals(corpus[i].first, corpus[i + 1].first) ? std::cout << "TRUE\n"
+                                                 : std::cout << "FALSE\n";
+  }
+  std::cout << "EVENBINARY == ODDBINARY\' : ";
+  equals(corpus[4].first, complement(corpus[5].first)) ? std::cout << "TRUE\n"
+                                                       : std::cout << "FALSE\n";
+
+  std::cout << "EMPTYSTRING == EMPTYSTRING ∪ DENYALL : ";
+  equals(_union(corpus[1].first, corpus[1].first),
+         _union(corpus[1].first, corpus[0].first))
+      ? std::cout << "TRUE\n"
+      : std::cout << "FALSE\n";
+
+  std::cout << "DENYALL\' == EVENBINARY ∪ NOTZERO : ";
+  equals(complement(_union(corpus[0].first, corpus[0].first)),
+         _union(corpus[4].first, corpus[7].first))
+      ? std::cout << "TRUE\n"
+      : std::cout << "FALSE\n";
+
+  character c99(99), c('c', 1);
+
+  std::cout << "ONLYCHAR(c) == ONLYCHAR(99)) : ";
+  equals(givenChar(c), givenChar(c99)) ? std::cout << "TRUE\n"
+                                       : std::cout << "FALSE\n";
+    std::cout << SEPARATOR;
+
+  return passed;
+}
+
+
+inline bool testOracle(Corpus corpus) {
+    std::cout << SEPARATOR << "ORACLE TESTS\n" << SEPARATOR;
+    for(int i = 0; i < corpus.nfas.size(); i++){
+        std::cout << corpus.nfas[i].second << '\n';
+        for(int j = 0; j < corpus.traces[i].size(); j++){
+            for(auto e : corpus.traces[i][j]){
+                std::cout<< " -> " << '[' << e.first << ']' << e.second;
+            }
+            oracle(corpus.nfas[i].first, corpus.traces[i][j]);
+            
+        }
+        std::cout << SEPARATOR;
+    }
+    return true;
+}
+
+
+// Task 22
+inline bool verifyWithEquals() {
+std::cout << "VERIFY WITH EQUALS\n" << SEPARATOR;
+    
+  character c0(0), c1(1);
+  alphabet binary(std::vector<character>{c0, c1});
+
+  DFA<int> denyAll([](int qi) { return qi; }, binary, 0,
+                   [](int qi, character c) { return 0; },
+                   [](int qi) { return 0; });
+  DFA<int> acceptAll([](int qi) { return qi; }, binary, 1,
+                     [](int qi, character c) { return 1; },
+                     [](int qi) { return 1; });
+  DFA<int> evenBinary([](int qi) { return qi == 0 || qi == 1; }, binary, 0,
+                      [](int qi, character c) { return !(c == 0); },
+                      [](int qi) { return qi == 0; });
+  DFA<int> oddBinary([](int qi) { return qi == 0 || qi == 1; }, binary, 0,
+                     [](int qi, character c) { return !(c == 0); },
+                     [](int qi) { return qi == 1; });
+
+  std::cout << "ODDBINARY' == EVENBINARY : ";
+  equals(complement(oddBinary), evenBinary) ? std::cout << "Passed\n"
+                                            : std::cout << "Failed\n";
+  std::cout << "ODDBINARY ∪ EVENBINARY' == ACCEPTALL : ";
+  equals(_union(oddBinary, evenBinary), _union(acceptAll, acceptAll))
+      ? std::cout << "Passed\n"
+      : std::cout << "Failed\n";
+  std::cout << "ODDBINARY ∩ EVENBINARY' == DENYALL : ";
+  equals(intersect(oddBinary, evenBinary), _union(denyAll, denyAll))
+      ? std::cout << "Passed\n"
+      : std::cout << "Failed\n";
+  return true;
+}
+
+// Task 35
+template <class State>
+inline bool testCat(std::vector<std::pair<DFA<State>, std::string>> corpus) {
+  return true;
+}
+
+bool testTraceTree(Corpus corpus){
+    character epsilon(-1), c0(0), c1(1), c2(2), a('a', 1), b('b', 1), e('e', 1),
+        n('n', 1);
+    alphabet binary(std::vector<character>{c0, c1})
+    , three(std::vector<character>{c0, c1, c2})
+    , ben(std::vector<character>{b, e, n})
+    , ab(std::vector<character>{a, b})
+    , unary(std::vector<character>{c0});
+    string s(binary, std::vector<character>{c0, c1, c0,c1, c0, c0});
+    
+    std::vector<string> strings =
+{
+  string(binary, std::vector<character>{c0}),
+  string(binary, std::vector<character>{c0, c1}),
+  string(binary, std::vector<character>{c0, c1, c0}),
+  string(binary, std::vector<character>{c0, c1, c0,c1}),
+  string(binary, std::vector<character>{c0}),
+  string(binary, std::vector<character>{c0, c1}),
+  string(binary, std::vector<character>{c0, c1, c0}),
+  string(binary, std::vector<character>{c0, c1, c0,c1}),
+  string(binary, std::vector<character>{epsilon}),
+  string(binary, std::vector<character>{epsilon, c0}),
+  string(binary, std::vector<character>{epsilon, c0, c0}),
+  string(binary, std::vector<character>{epsilon, c0, c0, c0}),
+    
+  string(ab, std::vector<character>{b}),
+  string(ab, std::vector<character>{b, a}),
+  string(ab, std::vector<character>{b,b, a}),
+  string(ab, std::vector<character>{b,a,b,a,epsilon})
+};
+    
+    std::cout << "TRACE TREES\n" << SEPARATOR;
+
+    for(int i = 0; i < corpus.nfas.size(); i++){
+        std::cout << corpus.nfas[i].second << '\n';
+        for(int j = i*4; j < i*4+4; j++){
+        explore(corpus.nfas[i].first, strings[j]);
+            std::cout << std::endl;
+        }
+        std::cout<< SEPARATOR;
+    }
+
+    
+    return true;
 }
 
 #endif
