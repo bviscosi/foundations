@@ -29,16 +29,25 @@ public:
       chars.push_back(character(c));
   }
   void push_front(character c) { chars.insert(chars.begin(), c); }
-    
+
   character pop_front() {
     character c = chars[0];
     chars.erase(chars.begin());
     return c;
   }
+  string rest() {
+    if (chars.size() > 0)
+      chars.erase(chars.begin());
+    return string(a, chars);
+  }
 
   int size() { return int(chars.size()); }
   bool isEmpty() { return !(chars.size()); }
+  bool isEpsilon() {
+    return (chars.size() == 0 || (chars.size() == 1 && chars[0] == -1));
+  }
   friend std::ostream &operator<<(std::ostream &out, const string &s);
+  friend bool operator==(string s1, string s2) { return s1.chars == s2.chars; }
 };
 
 #endif

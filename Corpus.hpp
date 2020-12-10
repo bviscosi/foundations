@@ -8,6 +8,7 @@ class Corpus {
 public:
   Corpus(std::string selector);
   std::vector<std::pair<DFA<int>, std::string>> getDFAs() { return dfas; }
+  std::vector<std::pair<NFA<int>, std::string>> getNFAs() { return nfas; }
   bool isEmpty() { return !dfas.size() && !nfas.size(); }
   void add(std::pair<DFA<int>, std::string> dfa) { dfas.push_back(dfa); }
   void add(std::pair<NFA<int>, std::string> dfa) { nfas.push_back(dfa); }

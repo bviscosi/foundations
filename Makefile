@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -c -g -Og -std=c++17
-OBJ = main.o character.o alphabet.o string.o DFA.o NFA.o Corpus.o
+OBJ = main.o character.o alphabet.o string.o DFA.o NFA.o Corpus.o Regex.o
 DEPS =
 LIBS =
 EXE = run

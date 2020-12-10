@@ -18,44 +18,51 @@ public:
       : Q(Q), E(E), q0(q0), d(d), F(F){};
   ;
 
-   bool accepts(string w) {
-     std::vector<std::pair<State, string>> visited;
-     std::vector<std::pair<State, string>> pending = {std::pair(q0, w)};
-  
-     auto qi = q0;
-  
-     while (!pending.empty()) {
-  
-       std::vector<int>::iterator position = std::find(pending.begin(),
-       pending.end(), qi);
-  
-       if (position != pending.end())
-         pending.erase(position);
-  
-       if (w.isEmpty() && F(qi))
-         return true;
-  
-       for (auto qj : d(qi, epsilon)) {
-         if (std::find(pending.begin(), pending.end(), qj) == pending.end()) {
-           pending.push_back(qj);
-           visited.push_back(qj);
-         }
-       }
-  
-  
-       if (!w.isEmpty()) {
-         for (auto qj : d(qi, w.chars[0])) {
-           if (std::find(pending.begin(), pending.end(), qj) == pending.end())
-           {
-             pending.push_back(qj);
-             visited.push_back(qj);
-           }
-         }
-       }
-  
-     }
-     return false;
-   }
+  bool accepts(string w) {
+    std::vector<std::pair<State, string>> visited;
+    std::vector<std::pair<State, string>> pending = {std::make_pair(q0, w)};
+
+    while (!pending.empty()) {
+      auto qi = pending[0];
+      // pop off qi from pending
+      auto position = std::find(pending.begin(), pending.end(), qi);
+      pending.erase(position);
+
+      // if w is empty/epsilon -> accepted ? return true : add all epsilon
+      // transitions
+      if (qi.second.isEmpty()) {
+        if (F(qi.first))
+          return true;
+        for (auto qj : d(qi.first, epsilon)) {
+          if (std::find(pending.begin(), pending.end(),
+                        std::make_pair(qj, qi.second)) == pending.end()) {
+            auto qk = std::make_pair(qj, qi.second);
+            pending.push_back(qk);
+            visited.push_back(qk);
+          }
+        }
+      } else {
+        for (auto qj : d(qi.first, epsilon)) {
+          if (std::find(pending.begin(), pending.end(),
+                        std::make_pair(qj, qi.second)) == pending.end()) {
+            auto qk = std::make_pair(qj, qi.second);
+            pending.push_back(qk);
+            visited.push_back(qk);
+          }
+        }
+        character c = qi.second.pop_front();
+        for (auto qj : d(qi.first, c)) {
+          if (std::find(pending.begin(), pending.end(),
+                        std::make_pair(qj, qi.second)) == pending.end()) {
+            pending.push_back(std::make_pair(qj, qi.second));
+            visited.push_back(std::make_pair(qj, qi.second));
+          }
+        }
+      }
+    }
+    return false;
+  }
+  alphabet getE() { return E; }
 
   std::function<bool(State)> Q;
   alphabet E;
@@ -76,7 +83,7 @@ public:
   character c = character(-1);
 
   TraceTree(NFA<State> nfa, string w, State qi) : q(qi), w(w) {
-      
+
     std::vector<State> states = nfa.d(q, epsilon);
     if (w.isEmpty() &&
         (states.size() == 0 || (states.size() == 1 && states[0] == q))) {
@@ -93,10 +100,14 @@ public:
     std::cout << "[" << q << "]";
     if (branches.size() != 0) {
       w.isEmpty() ? std::cout << "\u03B5" : std::cout << w.chars[0];
-        for (int i = 0; i < branches.size(); i++){
-            if(i > 0) {for(int j =0; j < branches.size(); j++){std::cout << "        ";}}
-        branches[i].print();
+      for (int i = 0; i < branches.size(); i++) {
+        if (i > 0) {
+          for (int j = 0; j < branches.size(); j++) {
+            std::cout << "        ";
+          }
         }
+        branches[i].print();
+      }
     } else {
       std::cout << " : ";
       accepted ? std::cout << "\u2713\n" : std::cout << "x\n";

@@ -65,93 +65,63 @@ Corpus::Corpus(std::string selector) {
             std::pair(me, "ME"),
             std::pair(notZero, "NOTZERO")};
 
-    // NFA<int> thirdFromEndisOne(
-    //     [](int qi) { return qi == 0 || qi == 1 || qi == 2 || qi == 3; },
-    //     binary, 0,
-    //     [](int qi, character c) {
-    //       switch (qi) {
-    //       case (0):
-    //         return c == 0 ? std::vector<int>{0} : std::vector<int>{0, 1};
-    //       case (1):
-    //         return std::vector<int>{2};
-    //       case (2):
-    //         return std::vector<int>{3};
-    //       case (3):
-    //         return (c == -1) ? std::vector<int>{3} : std::vector<int>{0};
-    //       default:
-    //         return std::vector<int>{4};
-    //       }
-    //     },
-    //     [](int qi) { return qi == 3; });
-    //
-    // NFA<int> thirdFromEndisZero(
-    //     [](int qi) { return qi == 0 || qi == 1 || qi == 2 || qi == 3; },
-    //     binary, 0,
-    //     [](int qi, character c) {
-    //       switch (qi) {
-    //       case (0):
-    //         return c == 1 ? std::vector<int>{0} : std::vector<int>{0, 1};
-    //       case (1):
-    //         return std::vector<int>{2};
-    //       case (2):
-    //         return std::vector<int>{3};
-    //       case (3):
-    //         return (c == -1) ? std::vector<int>{3} : std::vector<int>{0};
-    //       default:
-    //         return std::vector<int>{4};
-    //       }
-    //     },
-    //     [](int qi) { return qi == 0; });
+    NFA<int> n1([](int qi) { return qi == 1 || qi == 2 || qi == 3 || qi == 4; },
+                binary, 1,
+                [](int qi, character c) {
+                  switch (qi) {
+                  case (1):
+                    if (c == 0)
+                      return std::vector<int>{1};
+                    else if (c == 1)
+                      return std::vector<int>{1, 2};
+                    else
+                      return std::vector<int>{};
+                  case (2):
+                    if (c == 0 || c == -1)
+                      return std::vector<int>{3};
+                    else
+                      return std::vector<int>{};
+                  case (3):
+                    if (c == 1)
+                      return std::vector<int>{4};
+                    else
+                      return std::vector<int>{};
+                  case (4):
+                    return std::vector<int>{4};
+                  default:
+                    return std::vector<int>{};
+                  }
+                },
+                [](int qi) { return qi == 4; });
 
-    NFA<int> n1(
-        [](int qi) { return qi == 1 || qi == 2 || qi == 3 || qi == 4; }, binary,
-        1,
-        [](int qi, character c) {
-          switch (qi) {
-          case (1):
-                  if(c == 0) return std::vector<int>{1};
-                  else if(c == 1) return std::vector<int>{1, 2};
-                  else return std::vector<int>{};
-          case (2):
-            if (c == 0 || c == -1)
-                return std::vector<int>{3};
-            else return std::vector<int>{};
-          case (3):
-            if (c == 1)
-              return std::vector<int>{4};
-            else return std::vector<int>{};
-          case (4):
-            return std::vector<int>{4};
-          default:
-            return std::vector<int>{};
-          }
-        },
-        [](int qi) { return qi == 4; });
-
-    NFA<int> n2(
-        [](int qi) { return qi == 1 || qi == 2 || qi == 3 || qi == 4; }, binary,
-        1,
-        [](int qi, character c) {
-          switch (qi) {
-          case (1):
-                  if (c == 0) return std::vector<int>{1};
-                  else if(c == 1) return std::vector<int>{1, 2};
-                  else return std::vector<int>{};
-          case (2):
-            if (c == 0 || c == 1)
-              return std::vector<int>{3};
-            else return std::vector<int>{};
-          case (3):
-            if (c == 0 || c == 1)
-              return std::vector<int>{4};
-            else return std::vector<int>{};
-          case (4):
-            return std::vector<int>{4};
-          default:
-             return std::vector<int>{};
-          }
-        },
-        [](int qi) { return qi == 4; });
+    NFA<int> n2([](int qi) { return qi == 1 || qi == 2 || qi == 3 || qi == 4; },
+                binary, 1,
+                [](int qi, character c) {
+                  switch (qi) {
+                  case (1):
+                    if (c == 0)
+                      return std::vector<int>{1};
+                    else if (c == 1)
+                      return std::vector<int>{1, 2};
+                    else
+                      return std::vector<int>{};
+                  case (2):
+                    if (c == 0 || c == 1)
+                      return std::vector<int>{3};
+                    else
+                      return std::vector<int>{};
+                  case (3):
+                    if (c == 0 || c == 1)
+                      return std::vector<int>{4};
+                    else
+                      return std::vector<int>{};
+                  case (4):
+                    return std::vector<int>{4};
+                  default:
+                    return std::vector<int>{};
+                  }
+                },
+                [](int qi) { return qi == 4; });
 
     NFA<int> n3(
         [](int qi) {
@@ -163,29 +133,35 @@ Corpus::Corpus(std::string selector) {
           case (1):
             if (c == -1)
               return std::vector<int>{2, 3};
-            else return std::vector<int>{};
+            else
+              return std::vector<int>{};
           case (2):
             if (c == 0)
               return std::vector<int>{4};
-            else return std::vector<int>{};
+            else
+              return std::vector<int>{};
           case (3):
             if (c == 0)
               return std::vector<int>{5};
-            else return std::vector<int>{};
+            else
+              return std::vector<int>{};
           case (4):
             if (c == 0)
               return std::vector<int>{2};
-            else return std::vector<int>{};
+            else
+              return std::vector<int>{};
           case (5):
             if (c == 0)
               return std::vector<int>{6};
-            else return std::vector<int>{};
+            else
+              return std::vector<int>{};
           case (6):
             if (c == 0)
               return std::vector<int>{3};
-            else return std::vector<int>{};
+            else
+              return std::vector<int>{};
           default:
-             return std::vector<int>{};
+            return std::vector<int>{};
           }
         },
         [](int qi) { return (qi == 2 || qi == 3); });
@@ -198,19 +174,22 @@ Corpus::Corpus(std::string selector) {
                       return std::vector<int>{3};
                     if (c == 'b')
                       return std::vector<int>{2};
-                    else return std::vector<int>{};
+                    else
+                      return std::vector<int>{};
                   case (2):
                     if (c == 'b')
                       return std::vector<int>{3};
                     else if (c == 'a')
                       return std::vector<int>{2, 3};
-                    else return std::vector<int>{};
+                    else
+                      return std::vector<int>{};
                   case (3):
                     if (c == 'a')
                       return std::vector<int>{1};
-                    else return std::vector<int>{};
+                    else
+                      return std::vector<int>{};
                   default:
-                     return std::vector<int>{};
+                    return std::vector<int>{};
                   }
                 },
                 [](int qi) { return qi == 1; });
@@ -218,28 +197,6 @@ Corpus::Corpus(std::string selector) {
     nfas = {std::pair(n1, "N1"), std::pair(n2, "N2"), std::pair(n3, "N3"),
             std::pair(n4, "N4")};
 
-    // std::vector<std::vector<std::pair<State, string>>> one_traces = {
-    //     {std::pair(1, string "0"), std::pair(1, string "")},
-    //     {std::pair(1, string "1"), std::pair(1, "")},
-    //     {std::pair(1, string "1"), std::pair(2, "")},
-    //     {std::pair(1, string "101"), std::pair(2, "01"), std::pair(3, "1"),
-    //      std::pair(4, "")},
-    //     {std::pair(1, string "101"), std::pair(1, "01"), std::pair(1, "1"),
-    //      std::pair(1, "")},
-    //     {std::pair(1, string "1-11"), std::pair(2, "-11"), std::pair(3, "1"),
-    //      std::pair(4, "")}};
-    // std::vector<std::vector<std::pair<State, string>>> zero_traces = {
-    //     {std::pair(1, string "0"), std::pair(1, string "")},
-    //     {std::pair(1, string "1"), std::pair(1, "")},
-    //     {std::pair(1, string "1"), std::pair(2, "")},
-    //     {std::pair(1, string "101"), std::pair(2, "01"), std::pair(3, "1"),
-    //      std::pair(4, "")},
-    //     {std::pair(1, string "101"), std::pair(1, "01"), std::pair(1, "1"),
-    //      std::pair(1, "")},
-    //     {std::pair(1, string "1-11"), std::pair(2, "-11"), std::pair(3, "1"),
-    //      std::pair(4, "")}};
-
-    // TASK 26
     n1_traces = {
 
         {std::pair(1, string(binary, std::vector<character>{c0})),
@@ -353,13 +310,12 @@ Corpus::Corpus(std::string selector) {
          std::pair(2, string(binary, std::vector<character>{a, a})),
          std::pair(3, string(binary, std::vector<character>{a})),
          std::pair(1, string(binary))}
-        
 
     };
-      
-      traces.push_back(n1_traces);
-      traces.push_back(n2_traces);
-      traces.push_back(n3_traces);
-      traces.push_back(n4_traces);
+
+    traces.push_back(n1_traces);
+    traces.push_back(n2_traces);
+    traces.push_back(n3_traces);
+    traces.push_back(n4_traces);
   }
 }

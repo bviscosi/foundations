@@ -6,10 +6,14 @@
 class character {
 
 public:
+  character(){};
   character(int character) : val(character){};
   character(int character, bool l) : val(character), isLetter(l){};
   friend std::ostream &operator<<(std::ostream &out, const character &c) {
-      if (c == -1){ out << "\u03B5"; return out;}
+    if (c == -1) {
+      out << "\u03B5";
+      return out;
+    }
     c.isLetter ? out << static_cast<char>(c.val) : out << c.val;
     return out;
   }
